@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="./script.js" defer></script>
+    <title>Document</title>
+</head>
+<body>
+    <div class="wrapper"> 
+        <div class="menu">
+            <h1 class="menu_title">Мои заметки</h1> 
+            <button class="munu_button" onclick="createNewNote()"> 
+                Новая заметка 
+            </button>
+            <h2 class="tegs">Теги</h2>
+            
+            <!-- Список тегов для фильтрации -->
+            <div class="tegs_li active" onclick="filterNotes('Все')">Все</div>
+            <div class="tegs_li" onclick="filterNotes('Идеи')">Идеи</div>
+            <div class="tegs_li" onclick="filterNotes('Личное')">Личное</div>
+            <div class="tegs_li" onclick="filterNotes('Работа')">Работа</div>
+            <div class="tegs_li" onclick="filterNotes('Список покупок')">Список покупок</div>
+        </div>
+        <div class="content">
+            <div class="search">
+                <input type="text" id="searchInput" class="forma_input" placeholder="Поиск по словам...">
+                <button class="btn" onclick="searchNotes()">
+                    <img src="icons8-поиск-30.png">
+                </button>
+            </div>
+            
+            
+            <div class="scroll" id="notesListContainer">
+                <div class="zadachi" id="notesContainer">
+                    <!-- Заметки  -->
+                </div>
+            </div>
+                
+            <!-- для открытой заметки -->
+            <div class="note-editor" id="noteEditor" style="display: none;">
+                <div class="editor-header">
+                    <button class="back-button" onclick="closeNote()">← Назад</button>
+                    <div>
+                        <button class="delete-button" onclick="deleteCurrentNote()">Удалить</button>
+                        <button class="save-button" onclick="saveNote()">Сохранить</button>
+                    </div>
+                </div>
+                <div class="editor-content">
+                    <input type="text" class="note-title" id="noteTitle" placeholder="Заголовок">
+                    
+                    <!-- Выбор тега -->
+                    <div class="tag-selector">
+                        <label>Тег:</label>
+                        <select id="noteTag">
+                            <option value="Все">Все</option>
+                            <option value="Идеи">Идеи</option>
+                            <option value="Личное">Личное</option>
+                            <option value="Работа">Работа</option>
+                            <option value="Список покупок">Список покупок</option>
+                        </select>
+                    </div>
+                    
+                    <textarea class="note-text" id="noteText" placeholder="Текст заметки..."></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
