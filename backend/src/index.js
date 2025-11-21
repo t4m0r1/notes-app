@@ -34,6 +34,7 @@ let notes = [
   }
 ];
 
+//  показывает что есть в памяти
 function getAllNotes() {
   return notes;
 }
@@ -46,7 +47,7 @@ function addNote(data) {
     tag: data.tag || 1,
     updatedAt: new Date().toDateString()
   };
-  notes.push(newNote);
+  notes.push(newNote); // добавляем новую заметку в массив
   return newNote;
 }
 
@@ -58,14 +59,16 @@ function deleteNotes(id) {
 }
 
 function updatedNote(data) {
+  // проверка есть ли данные || id  
   if (!data || !data.id) return false;
-  
+
+  // ищем индекс заметки по id
   const noteIndex = notes.findIndex(note => note.id === data.id);
   if (noteIndex === -1) return false;
   
-  notes[noteIndex] = {
-    ...notes[noteIndex],
-    ...data,
+  notes[noteIndex] = { // обновляем все соединяя
+    ...notes[noteIndex], // старые 
+    ...data, // новые 
     updatedAt: new Date().toDateString()
   };
   
@@ -73,11 +76,12 @@ function updatedNote(data) {
 }
 
 const server = http.createServer((req, res) => {
-  // CORS headers
+  // пускает к себе любой домен
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
+  // проверка можно ли кинуть запрос
   if (req.method === 'OPTIONS') {
     res.statusCode = 200;
     res.end();
@@ -87,24 +91,26 @@ const server = http.createServer((req, res) => {
   try {
     if (req.url === '/notes' && req.method === 'GET') {
       res.statusCode = 200;
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify(getAllNotes()));
+      res.setHeader('Content-Type', 'application/json'); // указываем возврат json
+      res.end(JSON.stringify(getAllNotes())); // отправляем json
       return;
     }
 
     if (req.url === '/notes' && req.method === 'POST') {
       let body = [];
-      req.on('data', chunk => body.push(chunk));
-      req.on('end', () => {
+      req.on('data', chunk => body.push(chunk)); // собираем по частям 
+      req.on('end', () => { // собрали B]
         try {
-          const buffer = Buffer.concat(body);
-          const rawDataString = buffer.toString();
-          const data = JSON.parse(rawDataString);
+          const buffer = Buffer.concat(body); // все в буфер ака чанки 
+          const rawDataString = buffer.toString(); // из чанков в строку
+          const data = JSON.parse(rawDataString); // из строки в код 
           const newNote = addNote(data);
           
           res.statusCode = 201;
           res.setHeader('Content-Type', 'application/json');
-          res.end(JSON.stringify(newNote));
+          res.end(JSON.stringify(newNote)); // отправляем созданную
+
+          // если ошибка
         } catch (error) {
           res.statusCode = 400;
           res.setHeader('Content-Type', 'application/json');
@@ -114,7 +120,7 @@ const server = http.createServer((req, res) => {
       return;
     }
 
-    if (req.url === '/notes' && req.method === 'PATCH') {
+    if (req.url === '/notes' && req.method === 'PATCH') { // запрос на обнову
       let body = [];
       req.on('data', chunk => body.push(chunk));
       req.on('end', () => {
@@ -134,6 +140,7 @@ const server = http.createServer((req, res) => {
           res.statusCode = 200;
           res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify(result));
+
         } catch (error) {
           res.statusCode = 400;
           res.setHeader('Content-Type', 'application/json');
@@ -159,7 +166,7 @@ const server = http.createServer((req, res) => {
             return;
           }
           
-          const result = deleteNotes(data.id);
+          const result = deleteNotes(data.id); // если заметка не найдена
           if (!result) {
             res.statusCode = 404;
             res.setHeader('Content-Type', 'application/json');
@@ -179,7 +186,7 @@ const server = http.createServer((req, res) => {
       return;
     }
 
-    res.statusCode = 404;
+    res.statusCode = 404; // если маршрут не найден
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify({ message: 'Not found' }));
 
@@ -191,11 +198,11 @@ const server = http.createServer((req, res) => {
   }
 });
 
-server.listen(port, host, () => {
+server.listen(port, host, () => { // запускаем сервер
   console.log(` Сервер запущен: http://${host}:${port}`);
 });
 
-// Обработка ошибок
+// подушка безопасности
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
 });
